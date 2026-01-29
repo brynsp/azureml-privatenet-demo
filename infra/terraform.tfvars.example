@@ -1,0 +1,31 @@
+resource_group_name = "rg-azml-private-dev"
+location            = "centralus"
+subscription_id     = "00000000-0000-0000-0000-000000000000"
+vnet_address_space  = ["10.0.0.0/16"]
+subnet_prefixes = {
+  "subnet-private-endpoints" = "10.0.0.0/24"
+  "subnet-training"          = "10.0.1.0/24"
+  "subnet-inference"         = "10.0.2.0/24"
+  "AzureBastionSubnet"       = "10.0.3.0/26"
+  "subnet-jumpbox"           = "10.0.4.0/24"
+}
+tags = {
+  Environment = "Development"
+  Project     = "AzureML-Private"
+  Owner       = "DataScienceTeam"
+}
+ds_vm_size               = "Standard_DS3_v2"
+training_cluster_vm_size = "Standard_D2_v2"
+
+# Optional controls
+manage_defender_plans                           = false
+jumpbox_auth_mode                               = "entra"
+jumpbox_admin_username                          = "azureadmin"
+jumpbox_enable_hybrid_benefit                   = true
+manage_defender_contact                         = false
+resource_group_security_control_ignore          = false
+aml_workspace_enable_managed_network            = true
+aml_workspace_managed_network_isolation_mode    = "AllowInternetOutbound"
+aml_workspace_provision_network_now_enabled     = true
+enable_compute_instance                         = true
+enable_compute_cluster                          = true

@@ -1,0 +1,12 @@
+subscription_id          = "00000000-0000-0000-0000-000000000000"
+location                 = "centralus"
+state_resource_group_name = "rg-tfstate"
+state_container_name       = "tfstate"
+tags = {
+  Environment = "Development"
+  Project     = "AzureML-Private"
+}
+
+# Optional controls
+# state_storage_account_name can be set explicitly, otherwise a name like sttfstateXXXXX is generated.
+resource_group_security_control_ignore = false
