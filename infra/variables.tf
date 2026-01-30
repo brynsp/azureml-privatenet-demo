@@ -109,12 +109,6 @@ variable "manage_defender_contact" {
   default     = false
 }
 
-variable "resource_group_security_control_ignore" {
-  description = "Whether to add SecurityControl=Ignore tag on the resource group for policy exemptions."
-  type        = bool
-  default     = false
-}
-
 variable "enable_compute_instance" {
   description = "Whether to create the AML compute instance."
   type        = bool

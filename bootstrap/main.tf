@@ -14,9 +14,7 @@ resource "random_string" "state_sa_suffix" {
 resource "azurerm_resource_group" "state" {
   name     = var.state_resource_group_name
   location = var.location
-  tags = var.resource_group_security_control_ignore ? merge(var.tags, {
-    SecurityControl = "Ignore"
-  }) : var.tags
+  tags = var.tags
 }
 
 resource "azurerm_storage_account" "state" {

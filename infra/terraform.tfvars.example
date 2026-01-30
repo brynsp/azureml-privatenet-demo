@@ -23,7 +23,6 @@ jumpbox_auth_mode                               = "entra"
 jumpbox_admin_username                          = "azureadmin"
 jumpbox_enable_hybrid_benefit                   = true
 manage_defender_contact                         = false
-resource_group_security_control_ignore          = false
 aml_workspace_enable_managed_network            = true
 aml_workspace_managed_network_isolation_mode    = "AllowInternetOutbound"
 aml_workspace_provision_network_now_enabled     = true

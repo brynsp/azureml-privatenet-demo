@@ -67,7 +67,7 @@ This repo is split into two Terraform runs:
 
 ### Storage Account Authentication
 
-This project configures Azure Storage Accounts with **Shared Access Keys disabled** for enhanced security. Terraform authenticates using Azure AD for both the application storage account and the remote state backend.
+This project configures Azure Storage Accounts with **Shared Access Keys disabled** for enhanced security. Terraform authenticates using Entra ID for both the application storage account and the remote state backend.
 
 1. **Terraform Configuration**: The `azurerm` provider is configured with `storage_use_azuread = true` in [infra/versions.tf](infra/versions.tf).
 2. **Backend Configuration**: The backend uses `use_azuread_auth = true` in [infra/backend.hcl.example](infra/backend.hcl.example).
@@ -139,14 +139,6 @@ The stack includes several feature toggles to adapt to different security and go
   * **true** to create the AML compute cluster.
   * **false** to skip the cluster.
 
-* `resource_group_security_control_ignore`:
-  * **true** to add the `SecurityControl=Ignore` tag to the infra resource group for policy exemption. When enabled, the Key Vault also allows public access from the Terraform runner’s public IP so secrets can be written during apply.
-  * **false** to leave tags unchanged and keep Key Vault public access disabled (run Terraform from inside the VNet).
-
-* `resource_group_security_control_ignore` (bootstrap):
-  * **true** to add the `SecurityControl=Ignore` tag to the bootstrap state resource group.
-  * **false** to leave tags unchanged.
-
 ### Design Tradeoffs (Security, Cost, Best Practices)
 
 This repo prioritizes **private networking and RBAC** by default. It is secure‑by‑design, but not cost‑optimized. Below are the key tradeoffs and how to tune them based on your goal.
@@ -156,13 +148,6 @@ This repo prioritizes **private networking and RBAC** by default. It is secure�
 * Keep `public_network_access_enabled = false` across core resources (default).
 * Set `aml_workspace_managed_network_isolation_mode = "AllowOnlyApprovedOutbound"` once you are ready to define outbound rules.
 * Keep `resource_group_security_control_ignore = false` after the initial deployment to avoid public Key Vault access.
-
-**Cost‑optimized (lower spend):**
-
-* Disable compute when not needed: `enable_compute_instance = false` and/or `enable_compute_cluster = false`.
-* Consider smaller VM sizes in `ds_vm_size` and `training_cluster_vm_size`.
-* Review ACR SKU (`Premium` is required for private endpoints; if private endpoints are not needed, a lower SKU is cheaper).
-* Reduce diagnostics volume by selecting specific log categories instead of all categories.
 
 **Best‑practice balance (recommended default path):**
 

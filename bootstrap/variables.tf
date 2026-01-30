@@ -43,9 +43,3 @@ variable "enable_state_role_assignment" {
   type        = bool
   default     = true
 }
-
-variable "resource_group_security_control_ignore" {
-  description = "Whether to add SecurityControl=Ignore tag on the state resource group for policy exemptions."
-  type        = bool
-  default     = false
-}

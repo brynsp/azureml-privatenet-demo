@@ -1,12 +1,11 @@
 data "azurerm_client_config" "current" {}
 
 data "http" "public_ip" {
-  count = var.resource_group_security_control_ignore ? 1 : 0
   url   = "https://api.ipify.org"
 }
 
 locals {
-  terraform_public_ip_cidr = var.resource_group_security_control_ignore ? "${chomp(data.http.public_ip[0].response_body)}/32" : null
+  terraform_public_ip_cidr = "${chomp(data.http.public_ip[0].response_body)}/32"
   key_vault_ip_rules       = local.terraform_public_ip_cidr != null ? [local.terraform_public_ip_cidr] : []
 }
 
@@ -22,9 +21,7 @@ module "key_vault" {
 
   sku_name = "standard"
 
-  public_network_access_enabled = var.resource_group_security_control_ignore
-
-  network_acls = {
+    network_acls = {
     default_action = "Deny"
     bypass         = "AzureServices"
     ip_rules       = local.key_vault_ip_rules
