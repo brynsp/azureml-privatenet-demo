@@ -118,6 +118,12 @@ The stack includes several feature toggles to adapt to different security and go
   * **Any non‑empty string** (default: `azureadmin`) to set the local admin username for the jumpbox VM.
   * The username and generated password are stored in Key Vault as `jumpbox-username` and `jumpbox-password`.
 
+* `jumpbox_image_publisher` / `jumpbox_image_offer` / `jumpbox_image_sku` / `jumpbox_image_version`:
+  * Defaults target Windows Server 2025 Datacenter Desktop Experience (`2025-datacenter`).
+  * To validate available regional SKUs before apply:
+    * `az vm image list-skus --location <region> --publisher MicrosoftWindowsServer --offer WindowsServer --all -o table`
+    * Select a non-`core` SKU for Desktop Experience.
+
 * `aml_workspace_enable_managed_network`:
   * **true** to enable AML managed virtual network for the workspace. This is best when you want Azure ML to own outbound control/isolation with minimal networking setup in locked‑down environments.
   * **false** to keep managed network disabled and use your own VNet controls. Choose this when you need full control of routing, NSGs, custom firewalls, or advanced hub‑and‑spoke designs.
@@ -158,6 +164,22 @@ This repo prioritizes **private networking and RBAC** by default. It is secure�
 ### Apply
 
 Use the bootstrap and infra steps above rather than running Terraform from the repo root.
+
+### Jumpbox Post-Deploy Verification
+
+Run these on the jumpbox after deployment:
+
+1. Windows image:
+   * `Get-ComputerInfo | Select-Object OsName, OsVersion, WindowsVersion`
+2. WinGet available:
+   * `winget --version`
+3. Azure CLI on Windows:
+   * `az version`
+4. WSL distro/version:
+   * `wsl -l -v`
+5. Azure CLI and python3 inside Ubuntu:
+   * `wsl -d Ubuntu -u root -- az version`
+   * `wsl -d Ubuntu -u root -- python3 --version`
 
 ### Defender for Cloud (Subscription Pricing)
 
