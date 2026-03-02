@@ -115,7 +115,7 @@ variable "jumpbox_image_sku" {
   default     = "2025-datacenter"
 
   validation {
-    condition     = !contains(lower(var.jumpbox_image_sku), "core")
+    condition     = !can(regex("(?i)core", var.jumpbox_image_sku))
     error_message = "jumpbox_image_sku must be a Desktop Experience SKU (not Core)."
   }
 }

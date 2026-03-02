@@ -21,7 +21,9 @@ $rebootRequired = $false
 if (-not (Command-Exists "winget.exe")) {
   Write-Log "winget not found. Installing App Installer."
   try {
-    Add-AppxPackage -Path "https://aka.ms/getwinget"
+    $wingetBundle = "C:\Windows\Temp\Microsoft.DesktopAppInstaller.msixbundle"
+    Invoke-WebRequest -Uri "https://aka.ms/getwinget" -OutFile $wingetBundle
+    Add-AppxPackage -Path $wingetBundle
     Start-Sleep -Seconds 5
   } catch {
     throw "Failed to install winget: $($_.Exception.Message)"
@@ -46,8 +48,9 @@ if ($LASTEXITCODE -eq 3010) {
   throw "wsl --set-default-version 2 failed with exit code $LASTEXITCODE."
 }
 
-$installedDistros = @(& wsl.exe -l -q 2>$null)
-if ($installedDistros -notcontains "Ubuntu") {
+$installedDistros = @(& wsl.exe -l -q 2>$null | ForEach-Object { "$_".Trim() })
+$ubuntuInstalled = @($installedDistros | Where-Object { $_ -match "^Ubuntu($|-)" }).Count -gt 0
+if (-not $ubuntuInstalled) {
   Write-Log "Ubuntu distro not found. Installing with wsl --install -d Ubuntu --no-launch."
   & wsl.exe --install -d Ubuntu --no-launch
   if ($LASTEXITCODE -eq 3010) {
