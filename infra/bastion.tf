@@ -96,10 +96,10 @@ resource "azurerm_windows_virtual_machine" "jumpbox" {
   }
 
   source_image_reference {
-    publisher = "MicrosoftWindowsServer"
-    offer     = "WindowsServer"
-    sku       = "2022-Datacenter"
-    version   = "latest"
+    publisher = var.jumpbox_image_publisher
+    offer     = var.jumpbox_image_offer
+    sku       = var.jumpbox_image_sku
+    version   = var.jumpbox_image_version
   }
 
   identity {
@@ -114,6 +114,21 @@ resource "azurerm_virtual_machine_extension" "aad_login" {
   type                       = "AADLoginForWindows"
   type_handler_version       = "1.0"
   auto_upgrade_minor_version = true
+}
+
+resource "azurerm_virtual_machine_extension" "jumpbox_bootstrap" {
+  name                       = "CustomScriptBootstrap"
+  virtual_machine_id         = azurerm_windows_virtual_machine.jumpbox.id
+  publisher                  = "Microsoft.Compute"
+  type                       = "CustomScriptExtension"
+  type_handler_version       = "1.10"
+  auto_upgrade_minor_version = true
+
+  settings = jsonencode({
+    commandToExecute = "powershell -ExecutionPolicy Bypass -Command \"[IO.File]::WriteAllText('C:\\\\Windows\\\\Temp\\\\jumpbox-bootstrap.ps1',[Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('${filebase64("${path.module}/bootstrap/windows/jumpbox-bootstrap.ps1")}'))); powershell -ExecutionPolicy Bypass -File C:\\\\Windows\\\\Temp\\\\jumpbox-bootstrap.ps1\""
+  })
+
+  depends_on = [azurerm_virtual_machine_extension.aad_login]
 }
 
 resource "azurerm_role_assignment" "vm_admin_login" {

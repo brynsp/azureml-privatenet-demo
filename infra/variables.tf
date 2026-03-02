@@ -97,6 +97,35 @@ variable "jumpbox_enable_hybrid_benefit" {
   default     = true
 }
 
+variable "jumpbox_image_publisher" {
+  description = "Jumpbox image publisher."
+  type        = string
+  default     = "MicrosoftWindowsServer"
+}
+
+variable "jumpbox_image_offer" {
+  description = "Jumpbox image offer."
+  type        = string
+  default     = "WindowsServer"
+}
+
+variable "jumpbox_image_sku" {
+  description = "Jumpbox image SKU. Use a non-Core Windows Server 2025 Datacenter SKU available in your region."
+  type        = string
+  default     = "2025-datacenter"
+
+  validation {
+    condition     = !can(regex("(?i)core", var.jumpbox_image_sku))
+    error_message = "jumpbox_image_sku must be a Desktop Experience SKU (not Core)."
+  }
+}
+
+variable "jumpbox_image_version" {
+  description = "Jumpbox image version."
+  type        = string
+  default     = "latest"
+}
+
 variable "aml_workspace_enable_managed_network" {
   description = "Whether to enable managed VNet for the AML workspace."
   type        = bool
