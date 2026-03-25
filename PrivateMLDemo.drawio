@@ -59,7 +59,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="hm2c10_KMIrfZevLs1g0-10" parent="1" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/networking/Private_Link_Hub.svg;" value="Azure Monitor&lt;br&gt;Private Link Scope" vertex="1">
-          <mxGeometry height="68" width="58.8" x="810" y="222" as="geometry" />
+          <mxGeometry height="68" width="58.8" x="815" y="222" as="geometry" />
         </mxCell>
         <mxCell id="hm2c10_KMIrfZevLs1g0-11" parent="1" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/networking/Private_Endpoint.svg;" value="" vertex="1">
           <mxGeometry height="66" width="72" x="618" y="222" as="geometry" />
@@ -107,7 +107,7 @@
           <mxGeometry height="40" width="45.33" x="631.34" y="457" as="geometry" />
         </mxCell>
         <mxCell id="hm2c10_KMIrfZevLs1g0-28" parent="1" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/networking/Network_Interfaces.svg;" value="" vertex="1">
-          <mxGeometry height="40" width="45.33" x="816.74" y="457" as="geometry" />
+          <mxGeometry height="40" width="45.33" x="821.74" y="457" as="geometry" />
         </mxCell>
         <mxCell id="hm2c10_KMIrfZevLs1g0-29" parent="1" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/networking/Network_Interfaces.svg;" value="" vertex="1">
           <mxGeometry height="40" width="45.33" x="169.33000000000004" y="457" as="geometry" />
