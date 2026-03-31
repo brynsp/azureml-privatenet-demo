@@ -1,13 +1,22 @@
-resource "azurerm_security_center_subscription_pricing" "defender_plans" {
-  for_each = var.manage_defender_plans ? toset([
-    "AppServices",
+locals {
+  defender_container_plans = var.enable_defender_for_containers ? [
+    "Containers",
     "ContainerRegistry",
+  ] : []
+
+  defender_optional_plans = var.manage_defender_plans ? [
+    "AppServices",
     "KeyVaults",
     "Arm",
     "StorageAccounts",
     "VirtualMachines",
-    "Containers"
-  ]) : toset([])
+  ] : []
+
+  defender_plans = toset(concat(local.defender_container_plans, local.defender_optional_plans))
+}
+
+resource "azurerm_security_center_subscription_pricing" "defender_plans" {
+  for_each = local.defender_plans
 
   tier          = "Standard"
   resource_type = each.value
