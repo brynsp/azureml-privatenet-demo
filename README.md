@@ -218,7 +218,7 @@ wsl --set-default-version 2
 wsl --install -d Ubuntu --no-launch
 ```
 
-If either command returns exit code **3010**, reboot the jumpbox and re-run only the command that required it.
+After each command, check `$LASTEXITCODE` in PowerShell. If either command returns exit code **3010**, a reboot is required — reboot the jumpbox and re-run only the command that returned 3010.
 
 After reboot, launch Ubuntu once to complete first-run setup (create a UNIX user when prompted), then verify:
 
