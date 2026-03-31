@@ -165,21 +165,88 @@ This repo prioritizes **private networking and RBAC** by default. It is secureâ€
 
 Use the bootstrap and infra steps above rather than running Terraform from the repo root.
 
-### Jumpbox Post-Deploy Verification
+### Jumpbox Post-Deploy Setup
 
-Run these on the jumpbox after deployment:
+After Terraform deploys the Windows Server 2025 jumpbox, connect via Bastion and complete the following steps. Windows Server 2025 Desktop Experience ships with **winget** and **Windows Terminal** pre-installed, so only Azure CLI (with the `ml` extension), WSL, and the WSL-side tools (python3, pip, Azure CLI + ml extension, Hugging Face CLI) need to be added. Run all commands in an **elevated PowerShell** session unless noted otherwise.
 
-1. Windows image:
-   * `Get-ComputerInfo | Select-Object OsName, OsVersion, WindowsVersion`
-2. WinGet available:
-   * `winget --version`
-3. Azure CLI on Windows:
-   * `az version`
-4. WSL distro/version:
-   * `wsl -l -v`
-5. Azure CLI and python3 inside Ubuntu:
-   * `wsl -d Ubuntu -u root -- az version`
-   * `wsl -d Ubuntu -u root -- python3 --version`
+#### 1. Install Azure CLI with ML extension (Windows)
+
+```powershell
+winget install --id Microsoft.AzureCLI --exact --silent --accept-package-agreements --accept-source-agreements
+```
+
+Restart PowerShell, then install the Azure ML extension:
+
+```powershell
+az extension add --name ml
+```
+
+Verify:
+
+```powershell
+az version          # CLI version
+az ml --help        # ML extension loaded
+```
+
+#### 2. Install WSL 2 with Ubuntu
+
+```powershell
+wsl --set-default-version 2
+wsl --install -d Ubuntu --no-launch
+```
+
+After each command, check `$LASTEXITCODE` in PowerShell. If either command returns exit code **3010**, a reboot is required â€” reboot the jumpbox and re-run only the command that returned 3010.
+
+After reboot, launch Ubuntu once to complete first-run setup (create a UNIX user when prompted), then verify:
+
+```powershell
+wsl -l -v
+```
+
+Expected output should list **Ubuntu** running under **WSL 2**.
+
+#### 3. Install tools inside WSL / Ubuntu
+
+Open the Ubuntu shell (or run via `wsl -d Ubuntu -u root`) and execute:
+
+```bash
+# System packages
+sudo apt-get update && sudo apt-get install -y \
+  python3 python3-pip ca-certificates curl apt-transport-https lsb-release gnupg
+
+# Azure CLI + ML extension
+curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+az extension add --name ml
+
+# Hugging Face CLI (model downloads)
+pip3 install --user huggingface-hub
+```
+
+Verify:
+
+```bash
+python3 --version
+pip3 --version
+az version
+az ml --help
+huggingface-cli --version
+```
+
+#### Post-setup verification summary
+
+| Check | Command | Expected |
+|---|---|---|
+| Windows version | `Get-ComputerInfo \| Select OsName` | Windows Server 2025 Datacenter |
+| WinGet (pre-installed) | `winget --version` | v1.x or later |
+| Windows Terminal (pre-installed) | Open from Start menu or run `wt` | Launches successfully |
+| Azure CLI (Windows) | `az version` | 2.x |
+| ML extension (Windows) | `az ml --help` | Shows ml sub-commands |
+| WSL distro | `wsl -l -v` | Ubuntu, Version 2 |
+| Python 3 (WSL) | `wsl -d Ubuntu -- python3 --version` | 3.x |
+| pip (WSL) | `wsl -d Ubuntu -- pip3 --version` | pip 2x.x+ |
+| Azure CLI (WSL) | `wsl -d Ubuntu -- az version` | 2.x |
+| ML extension (WSL) | `wsl -d Ubuntu -- az ml --help` | Shows ml sub-commands |
+| Hugging Face CLI (WSL) | `wsl -d Ubuntu -- huggingface-cli --version` | 0.x |
 
 ### Defender for Cloud (Subscription Pricing)
 
