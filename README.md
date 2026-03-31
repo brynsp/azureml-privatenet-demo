@@ -165,21 +165,95 @@ This repo prioritizes **private networking and RBAC** by default. It is secureâ€
 
 Use the bootstrap and infra steps above rather than running Terraform from the repo root.
 
-### Jumpbox Post-Deploy Verification
+### Jumpbox Post-Deploy Setup
 
-Run these on the jumpbox after deployment:
+After Terraform deploys the Windows Server 2025 jumpbox, connect via Bastion and complete the following steps to install the required tooling. Run all commands in an **elevated PowerShell** session unless noted otherwise.
 
-1. Windows image:
-   * `Get-ComputerInfo | Select-Object OsName, OsVersion, WindowsVersion`
-2. WinGet available:
-   * `winget --version`
-3. Azure CLI on Windows:
-   * `az version`
-4. WSL distro/version:
-   * `wsl -l -v`
-5. Azure CLI and python3 inside Ubuntu:
-   * `wsl -d Ubuntu -u root -- az version`
-   * `wsl -d Ubuntu -u root -- python3 --version`
+#### 1. Verify the Windows image
+
+```powershell
+Get-ComputerInfo | Select-Object OsName, OsVersion, WindowsVersion
+```
+
+Confirm the output shows **Windows Server 2025 Datacenter** (Desktop Experience).
+
+#### 2. Install WinGet (Windows Package Manager)
+
+Windows Server 2025 Desktop Experience ships with the App Installer package, but if `winget` is not on the PATH:
+
+```powershell
+# Download the latest App Installer release
+Invoke-WebRequest -Uri "https://aka.ms/getwinget" -OutFile "$env:TEMP\Microsoft.DesktopAppInstaller.msixbundle"
+Add-AppxPackage -Path "$env:TEMP\Microsoft.DesktopAppInstaller.msixbundle"
+```
+
+Verify:
+
+```powershell
+winget --version
+```
+
+#### 3. Install Windows Terminal
+
+```powershell
+winget install --id Microsoft.WindowsTerminal --exact --silent --accept-package-agreements --accept-source-agreements
+```
+
+#### 4. Install Azure CLI (Windows)
+
+```powershell
+winget install --id Microsoft.AzureCLI --exact --silent --accept-package-agreements --accept-source-agreements
+```
+
+Restart PowerShell, then verify:
+
+```powershell
+az version
+```
+
+#### 5. Install WSL 2 with Ubuntu
+
+```powershell
+wsl --set-default-version 2
+wsl --install -d Ubuntu --no-launch
+```
+
+If either command returns exit code **3010**, reboot the jumpbox and re-run only the command that required it.
+
+After reboot, launch Ubuntu once to complete first-run setup (create a UNIX user when prompted), then verify:
+
+```powershell
+wsl -l -v
+```
+
+Expected output should list **Ubuntu** running under **WSL 2**.
+
+#### 6. Install tools inside WSL / Ubuntu
+
+Open the Ubuntu shell (or run via `wsl -d Ubuntu -u root`) and execute:
+
+```bash
+sudo apt-get update && sudo apt-get install -y python3 ca-certificates curl apt-transport-https lsb-release gnupg
+curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+```
+
+Verify:
+
+```bash
+python3 --version
+az version
+```
+
+#### Post-setup verification summary
+
+| Check | Command | Expected |
+|---|---|---|
+| Windows version | `Get-ComputerInfo \| Select OsName` | Windows Server 2025 Datacenter |
+| WinGet | `winget --version` | v1.x or later |
+| Azure CLI (Windows) | `az version` | 2.x |
+| WSL distro | `wsl -l -v` | Ubuntu, Version 2 |
+| Python 3 (WSL) | `wsl -d Ubuntu -- python3 --version` | 3.x |
+| Azure CLI (WSL) | `wsl -d Ubuntu -- az version` | 2.x |
 
 ### Defender for Cloud (Subscription Pricing)
 
