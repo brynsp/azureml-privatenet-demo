@@ -104,8 +104,12 @@ From the repo root:
 
 The stack includes several feature toggles to adapt to different security and governance environments. Set these in infra/terraform.tfvars (unless noted as bootstrap).
 
+* `enable_defender_for_containers`:
+  * **true** (default) to enable Defender for Containers and Container Registry pricing so ACR images are scanned for CVEs and runtime protections are on by default.
+  * **false** only when subscription-level Defender for Containers is centrally managed and must not be modified by this stack.
+
 * `manage_defender_plans`:
-  * **true** to have Terraform manage Defender for Cloud subscription pricing.
+  * **true** to have Terraform manage Defender for Cloud subscription pricing for other resource types (App Services, Key Vault, ARM, Storage Accounts, Virtual Machines).
   * **false** to leave existing/policy‑managed pricing untouched (avoids imports in managed subscriptions).
 
 * `manage_defender_contact`:
@@ -252,6 +256,6 @@ huggingface-cli --version
 
 ### Defender for Cloud (Subscription Pricing)
 
-Terraform can optionally manage Defender for Cloud subscription pricing. This is useful when you own the subscription security baseline and want it codified for repeatability, auditability, and drift detection. However, in shared or centrally governed subscriptions, Defender plans are often already enabled by policy. In that case, Terraform will require imports and can conflict with centralized controls.
+Terraform enables **Defender for Containers + Container Registry** by default (`enable_defender_for_containers = true`) so ACR images are continuously scanned for CVEs and runtime protections are active. Turn this off only if the subscription’s Defender for Containers plan is centrally managed elsewhere.
 
-**Recommendation:** leave `manage_defender_plans = false` unless you explicitly want Terraform to own Defender plan settings for the subscription.
+Use `manage_defender_plans` when you also want Terraform to manage other Defender plans (App Services, Key Vault, ARM, Storage Accounts, Virtual Machines); leave it `false` in centrally governed subscriptions to avoid imports. Optionally set `manage_defender_contact = true` and provide a valid `security_contact_email` to ensure alerts have an owner.

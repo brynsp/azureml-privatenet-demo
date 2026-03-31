@@ -18,6 +18,7 @@ ds_vm_size               = "Standard_DS3_v2"
 training_cluster_vm_size = "Standard_D2_v2"
 
 # Optional controls
+enable_defender_for_containers                  = true
 manage_defender_plans                           = false
 jumpbox_auth_mode                               = "entra"
 jumpbox_admin_username                          = "azureadmin"

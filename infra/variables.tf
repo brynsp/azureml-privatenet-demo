@@ -68,8 +68,14 @@ variable "security_contact_email" {
   default     = "admin@example.com"
 }
 
+variable "enable_defender_for_containers" {
+  description = "Whether to enable Defender for Containers (includes ACR image scanning) via subscription pricing."
+  type        = bool
+  default     = true
+}
+
 variable "manage_defender_plans" {
-  description = "Whether to manage Defender for Cloud subscription pricing with Terraform."
+  description = "Whether to manage Defender for Cloud subscription pricing for non-container resource types with Terraform."
   type        = bool
   default     = false
 }
