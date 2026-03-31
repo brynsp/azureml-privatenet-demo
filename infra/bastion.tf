@@ -96,10 +96,10 @@ resource "azurerm_windows_virtual_machine" "jumpbox" {
   }
 
   source_image_reference {
-    publisher = "MicrosoftWindowsServer"
-    offer     = "WindowsServer"
-    sku       = "2022-Datacenter"
-    version   = "latest"
+    publisher = var.jumpbox_image_publisher
+    offer     = var.jumpbox_image_offer
+    sku       = var.jumpbox_image_sku
+    version   = var.jumpbox_image_version
   }
 
   identity {
