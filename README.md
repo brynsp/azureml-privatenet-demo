@@ -8,6 +8,8 @@ Build a secure Azure Machine Learning (Azure ML) Workspace using **only** privat
 
 The infrastructure is deployed using **Terraform**, leveraging **Azure Verified Modules (AVM)** where applicable.
 
+![Architecture Diagram](./PrivateMLDemo.drawio.svg)
+
 ### Key Components
 
 1. **Networking**
